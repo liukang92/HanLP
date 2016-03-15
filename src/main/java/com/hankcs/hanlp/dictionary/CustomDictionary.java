@@ -179,7 +179,8 @@ public class CustomDictionary
         }
         catch (Exception e)
         {
-            logger.severe("自定义词典" + path + "读取错误！" + e);
+            if (!path.startsWith("."))
+                logger.severe("自定义词典" + path + "读取错误！" + e);
             return false;
         }
 
@@ -225,7 +226,7 @@ public class CustomDictionary
         if (HanLP.Config.Normalization) word = CharTable.convert(word);
         CoreDictionary.Attribute att = natureWithFrequency == null ? new CoreDictionary.Attribute(Nature.nz, 1) : CoreDictionary.Attribute.create(natureWithFrequency);
         if (att == null) return false;
-        if (dat.set(word, att)) return true;
+        if (dat != null && dat.set(word, att)) return true;
         if (trie == null) trie = new BinTrie<CoreDictionary.Attribute>();
         trie.put(word, att);
         return true;
@@ -288,7 +289,7 @@ public class CustomDictionary
     public static CoreDictionary.Attribute get(String key)
     {
         if (HanLP.Config.Normalization) key = CharTable.convert(key);
-        CoreDictionary.Attribute attribute = dat.get(key);
+        CoreDictionary.Attribute attribute = dat == null ? null : dat.get(key);
         if (attribute != null) return attribute;
         if (trie == null) return null;
         return trie.get(key);
@@ -349,7 +350,7 @@ public class CustomDictionary
      */
     public static boolean contains(String key)
     {
-        if (dat.exactMatchSearch(key) >= 0) return true;
+        if (dat != null && dat.exactMatchSearch(key) >= 0) return true;
         return trie != null && trie.containsKey(key);
     }
 
