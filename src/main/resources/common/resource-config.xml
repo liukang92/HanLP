@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration>
+    <?xml version="1.0"?>
+    <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+    <configuration>
+        <property>
+            <name>sentiment.lr.threshold</name>
+            <value>0.5</value>
+        </property>
+    </configuration>
+</configuration>
