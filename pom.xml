@@ -4,10 +4,10 @@
 
     <groupId>com.hankcs</groupId>
     <artifactId>hanlp</artifactId>
-    <version>portable-1.2.8</version>
+    <version>1.2.9</version>
 
     <name>HanLP</name>
-    <url>https://github.com/hankcs/HanLP</url>
+    <url>http://www.hankcs.com/</url>
     <description>
         汉语言处理包
     </description>
@@ -29,12 +29,6 @@
             <url>http://www.hankcs.com</url>
         </developer>
     </developers>
-    <scm>
-        <connection>scm:git@github.com:hankcs/HanLP.git</connection>
-        <developerConnection>scm:git@github.com:hankcs/HanLP.git</developerConnection>
-        <url>git@github.com:hankcs/HanLP.git</url>
-    </scm>
-
 
     <build>
         <plugins>
@@ -94,68 +88,25 @@
                     <skipTests>true</skipTests>
                 </configuration>
             </plugin>
-            <!-- Javadoc -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- GPG -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.5</version>
-                <executions>
-                    <execution>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>maven-repo</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </snapshotRepository>
-        <repository>
-            <id>maven-repo</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
     <properties>
         <java.version>1.6</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
         <maven-compiler-plugin.version>3.0</maven-compiler-plugin.version>
         <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
         <maven-resources-plugin.version>2.7</maven-resources-plugin.version>
         <maven-source-plugin.version>2.4</maven-source-plugin.version>
-        <junit.version>3.8.1</junit.version>
-        <lang3.version>3.4</lang3.version>
-    </properties>
 
+        <junit.version>3.8.1</junit.version>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${lang3.version}</version>
         </dependency>
     </dependencies>
 </project>
