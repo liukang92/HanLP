@@ -118,12 +118,14 @@ public class DoubleArrayTrie<V> implements Serializable, ITrie<V>
 
         for (int i = parent.left; i < parent.right; i++)
         {
+            //子节点长度小于父节点深度则continue
             if ((length != null ? length[i] : key.get(i).length()) < parent.depth)
                 continue;
 
             String tmp = key.get(i);
 
             int cur = 0;
+            //获取子节点字符code + 1
             if ((length != null ? length[i] : tmp.length()) != parent.depth)
                 cur = (int) tmp.charAt(parent.depth) + 1;
 
@@ -166,6 +168,7 @@ public class DoubleArrayTrie<V> implements Serializable, ITrie<V>
             return 0;
 
         int begin = 0;
+        //第一个兄弟的开始位置
         int pos = Math.max(siblings.get(0).code + 1, nextCheckPos) - 1;
         int nonzero_num = 0;
         int first = 0;
@@ -376,7 +379,7 @@ public class DoubleArrayTrie<V> implements Serializable, ITrie<V>
     public int build(List<String> _key, int _length[], int _value[],
                      int _keySize)
     {
-        if (_keySize > _key.size() || _key == null)
+        if (_key == null || _keySize > _key.size())
             return 0;
 
         // progress_func_ = progress_func;

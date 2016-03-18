@@ -31,7 +31,7 @@ public class WordNet
     /**
      * 节点，每一行都是前缀词，跟图的表示方式不同
      */
-    private LinkedList<Vertex> vertexes[];
+    private LinkedList<Vertex>[] vertexes;
 
     /**
      * 共有多少个节点

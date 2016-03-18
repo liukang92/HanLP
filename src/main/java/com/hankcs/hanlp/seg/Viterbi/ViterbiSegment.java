@@ -49,11 +49,11 @@ public class ViterbiSegment extends WordBasedGenerativeModelSegment
 //        start = System.currentTimeMillis();
         List<Vertex> vertexList = viterbi(wordNetAll);
 //        System.out.println("最短路：" + (System.currentTimeMillis() - start));
-
-        if (config.useCustomDictionary)
-        {
-            combineByCustomDictionary(vertexList);
-        }
+        // custom dictionary在初始化时就与core dictionary合并，无需二次分词
+//        if (config.useCustomDictionary)
+//        {
+//            combineByCustomDictionary(vertexList);
+//        }
 
         if (HanLP.Config.DEBUG)
         {

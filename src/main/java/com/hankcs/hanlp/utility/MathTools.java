@@ -38,6 +38,7 @@ public class MathTools
 //        int nTwoWordsFreq = BiGramDictionary.getBiFrequency(from.word, to.word);
         int nTwoWordsFreq = CoreBiGramTableDictionary.getBiFrequency(from.wordID, to.wordID);
         double value = -Math.log(dSmoothingPara * frequency / (MAX_FREQUENCY) + (1 - dSmoothingPara) * ((1 - dTemp) * nTwoWordsFreq / frequency + dTemp));
+//        double value = -Math.log((1 - dTemp) * nTwoWordsFreq / frequency + dTemp);
         if (value < 0.0)
         {
             value = -value;

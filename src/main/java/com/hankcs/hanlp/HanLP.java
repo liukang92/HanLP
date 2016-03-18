@@ -315,6 +315,10 @@ public class HanLP
      */
     private HanLP() {}
 
+    public static void mergeDictionary(String[] dictPath){
+
+    }
+
     /**
      * 简转繁
      *
