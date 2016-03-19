@@ -35,10 +35,15 @@ public class Predefine
     public final static int CT_NUM = CT_SINGLE + 4;       //HanYu Pinyin
     public final static int CT_INDEX = CT_SINGLE + 5;     //HanYu Pinyin
     public final static int CT_OTHER = CT_SINGLE + 12;    //Other
-    /**
-     * 浮点数正则
+	/**
+     * 正则匹配串
      */
+    // 浮点数正则
     public static final Pattern PATTERN_FLOAT_NUMBER = Pattern.compile("^(-?\\d+)(\\.\\d+)?$");
+    // url正则
+    public static final Pattern PATTERN_URL = Pattern.compile("((https?|ftp|rtsp)://)?[\\w-]+(\\.[\\w-]+){2,}(:[0-9]{1,4})?(/[!-~]*)*");
+    // email正则
+    public static final Pattern PATTERN_EMAIL = Pattern.compile("\\w[\\w\\.+-]*@[\\w-]+(\\.[\\w-]+)+");
 
     public static String POSTFIX_SINGLE =
         "坝邦堡城池村单岛道堤店洞渡队峰府冈港阁宫沟国海号河湖环集江礁角街井郡坑口矿里岭楼路门盟庙弄牌派坡铺旗桥区渠泉山省市水寺塔台滩坛堂厅亭屯湾屋溪峡县线乡巷洋窑营屿园苑院闸寨站镇州庄族陂庵町";
@@ -77,11 +82,11 @@ public class Predefine
     public static int MAX_WORDS = 650;
     public static int MAX_SEGMENT_NUM = 10;
 
-    public static final int MAX_FREQUENCY = 25146057; // 现在总词频25146057
+    public static int MAX_FREQUENCY = 141645278;
     /**
      * Smoothing 平滑因子
      */
-    public static final double dTemp = (double) 1 / MAX_FREQUENCY + 0.00001;
+    public static double dTemp = (double) 1 / MAX_FREQUENCY + 0.00001;
     /**
      * 平滑参数
      */

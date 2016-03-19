@@ -59,7 +59,7 @@ public class Config
     /**
      * 是否识别数字和量词
      */
-    public boolean numberQuantifierRecognize = false;
+    public boolean numberQuantifierRecognize = true;
     /**
      * 并行分词的线程数
      */

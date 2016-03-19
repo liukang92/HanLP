@@ -90,7 +90,9 @@ public class CharTable
         assert charArray != null;
         for (int i = 0; i < charArray.length; i++)
         {
-            charArray[i] = CONVERT[charArray[i]];
+            if(CharType.get(charArray[i]) != CharType.CT_CHINESE && CharType.get(charArray[i]) != CharType.CT_DELIMITER){
+                charArray[i] = CONVERT[charArray[i]];
+            }
         }
     }
 }

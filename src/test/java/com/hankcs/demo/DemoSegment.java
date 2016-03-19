@@ -12,7 +12,6 @@
 package com.hankcs.demo;
 
 import com.hankcs.hanlp.HanLP;
-import com.hankcs.hanlp.seg.Segment;
 import com.hankcs.hanlp.seg.common.Term;
 
 import java.util.List;
@@ -22,26 +21,28 @@ import java.util.List;
  *
  * @author hankcs
  */
-public class DemoSegment
-{
-    public static void main(String[] args)
-    {
-        String[] testCase = new String[]{
-                "梅花鹿晗代言的伊利QQ星，嘗嘗味道还不错",
-                "商品和服务",
-                "结婚的和尚未结婚的确实在干扰分词啊",
-                "买水果然后来世博园最后去世博会",
-                "中国的首都是北京",
-                "欢迎新老师生前来就餐",
-                "工信处女干事每月经过下属科室都要亲口交代24口交换机等技术性器件的安装工作",
-                "随着页游兴起到现在的页游繁盛，依赖于存档进行逻辑判断的设计减少了，但这块也不能完全忽略掉。",
-                "工商银行"
-        };
-//        HanLP.Config.enableDebug();
-        for (String sentence : testCase)
-        {
-            List<Term> termList = HanLP.segment(sentence);
-            System.out.println(termList);
-        }
-    }
+public class DemoSegment {
+	public static void main(String[] args) {
+		String[] testCase = new String[]{
+				"http://www.baidu.com梅花鹿晗代言的伊利QQ星，嘗嘗味道还不错liukang92@163.com",
+				"商品和服务",
+				"结婚的和尚未结婚的确实在干扰分词啊",
+				"买水果然后来世博园最后去世博会",
+				"中国的首都是北京",
+				"欢迎新老师生前来就餐",
+				"工信处女干事每月经过下属科室都要亲口交代24口交换机等技术性器件的安装工作",
+				"随着页游兴起到现在的页游繁盛，依赖于存档进行逻辑判断的设计减少了，但这块也不能完全忽略掉。",
+				"1个苹果"
+		};
+//		try {
+//			FileUtils.readLines(new File(ClassLoader.getSystemResource("jindian.txt").getFile())).toArray(testCase);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+		HanLP.Config.enableDebug();
+		for (String sentence : testCase) {
+			List<Term> termList = HanLP.segment(sentence);
+			System.out.println(termList);
+		}
+	}
 }

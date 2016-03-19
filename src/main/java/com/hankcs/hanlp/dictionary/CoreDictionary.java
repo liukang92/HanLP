@@ -17,8 +17,6 @@ import com.hankcs.hanlp.corpus.io.ByteArray;
 import com.hankcs.hanlp.corpus.tag.Nature;
 import com.hankcs.hanlp.utility.Predefine;
 import com.hankcs.hanlp.utility.TextUtility;
-import com.sun.deploy.util.ArrayUtil;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.*;
 import java.util.*;
@@ -33,7 +31,7 @@ import static com.hankcs.hanlp.utility.Predefine.logger;
 public class CoreDictionary {
 	public static DoubleArrayTrie<Attribute> trie = new DoubleArrayTrie<Attribute>();
 	public final static String path = HanLP.Config.CoreDictionaryPath;
-	public static final int totalFrequency = 221894;
+	public static int totalFrequency = 0;
 
 	// 自动加载词典
 	static {
@@ -60,14 +58,18 @@ public class CoreDictionary {
 	 *
 	 * @param core   core dictionary
 	 * @param custom custom dictionary
+	 * @return total frequency
 	 */
 	private static void mergeMap(Map<String, CoreDictionary.Attribute> core, Map<String, CoreDictionary.Attribute> custom) {
 		for (Map.Entry<String, CoreDictionary.Attribute> e : custom.entrySet()) {
 			CoreDictionary.Attribute origin = core.get(e.getKey());
 			if (origin == null) {
 				core.put(e.getKey(), e.getValue());
+				totalFrequency += e.getValue().totalFrequency;
 			} else {
+				totalFrequency -= origin.totalFrequency;
 				origin.merge(e.getValue());
+				totalFrequency += origin.totalFrequency;
 			}
 		}
 	}
@@ -80,7 +82,6 @@ public class CoreDictionary {
 		try {
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(path), "UTF-8"));
 			String line;
-			int MAX_FREQUENCY = 0;
 			long start = System.currentTimeMillis();
 			while ((line = br.readLine()) != null) {
 				String param[] = line.split("\\s");
@@ -92,12 +93,15 @@ public class CoreDictionary {
 					attribute.totalFrequency += attribute.frequency[i];
 				}
 				map.put(param[0], attribute);
-				MAX_FREQUENCY += attribute.totalFrequency;
+				totalFrequency += attribute.totalFrequency;
 			}
-			logger.info("核心词典读入词条" + map.size() + " 全部频次" + MAX_FREQUENCY + "，耗时" + (System.currentTimeMillis() - start) + "ms");
 			br.close();
+			logger.info("核心词典读入词条" + map.size() + " 全部频次" + totalFrequency);
 			// 加载用户词典并与核心词典合并
 			mergeMap(map, CustomDictionary.loadCustomDictionary());
+			Predefine.MAX_FREQUENCY = totalFrequency;
+			Predefine.dTemp = (double) 1 / totalFrequency + 0.00001;
+			logger.info("合并用户词典后共有词条" + map.size() + " 全部频次" + totalFrequency + "，耗时" + (System.currentTimeMillis() - start) + "ms");
 			trie.build(map);
 			logger.info("核心词典加载成功:" + trie.size() + "个词条，下面将写入缓存……");
 			try {
@@ -278,21 +282,21 @@ public class CoreDictionary {
 		 * @param attr
 		 */
 		public void merge(Attribute attr) {
-			if (attr == null){
+			if (attr == null) {
 				return;
 			}
 			Map<Nature, Integer> map = new HashMap<>();
-			for (int i = 0; i < this.nature.length; i++){
+			for (int i = 0; i < this.nature.length; i++) {
 				map.put(this.nature[i], this.frequency[i]);
 			}
-			for (int i = 0; i < attr.nature.length; i++){
+			for (int i = 0; i < attr.nature.length; i++) {
 				map.put(attr.nature[i], attr.frequency[i]);
 			}
 			this.nature = new Nature[map.size()];
 			this.frequency = new int[map.size()];
 			this.totalFrequency = 0;
-			int i  = 0;
-			for (Map.Entry<Nature, Integer> e : map.entrySet()){
+			int i = 0;
+			for (Map.Entry<Nature, Integer> e : map.entrySet()) {
 				this.nature[i] = e.getKey();
 				this.frequency[i] = e.getValue();
 				this.totalFrequency += e.getValue();

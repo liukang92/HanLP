@@ -171,6 +171,10 @@ public class HanLP
          * 是否执行字符正规化（繁体->简体，全角->半角，大写->小写），切换配置后必须删CustomDictionary.txt.bin缓存
          */
         public static boolean Normalization = false;
+        /**
+         * 是否开启模式匹配分词
+         */
+        public static boolean PatternSegment = true;
 
         static
         {
@@ -258,6 +262,7 @@ public class HanLP
                 HMMSegmentModelPath = p.getProperty("HMMSegmentModelPath", HMMSegmentModelPath);
                 ShowTermNature = "true".equals(p.getProperty("ShowTermNature", "true"));
                 Normalization = "true".equals(p.getProperty("Normalization", "false"));
+                PatternSegment = "true".equals(p.getProperty("PatternSegment", "true"));
             }
             catch (Exception e)
             {
