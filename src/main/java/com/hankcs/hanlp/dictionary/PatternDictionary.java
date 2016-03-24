@@ -38,7 +38,7 @@ public class PatternDictionary {
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(path), "UTF-8"));
 			String line;
 			while ((line = br.readLine()) != null) {
-				String param[] = line.split("\\s");
+				String param[] = line.split("\t");
 				int natureCount = (param.length - 1) / 2;
 				CoreDictionary.Attribute attribute = new CoreDictionary.Attribute(natureCount);
 				for (int i = 0; i < natureCount; ++i) {

@@ -158,7 +158,7 @@ public class CustomDictionary {
 			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(path), "UTF-8"));
 			String line;
 			while ((line = br.readLine()) != null) {
-				String[] param = line.split("\\s");
+				String[] param = line.split("\t");
 				if (param[0].length() == 0) continue;   // 排除空行
 				if (HanLP.Config.Normalization) CharTable.normalization(param[0]); // 正规化
 //                if (CoreDictionary.contains(param[0]) || map.containsKey(param[0]))
