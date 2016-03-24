@@ -99,8 +99,6 @@ public class CoreDictionary {
 			logger.info("核心词典读入词条" + map.size() + " 全部频次" + totalFrequency);
 			// 加载用户词典并与核心词典合并
 			mergeMap(map, CustomDictionary.loadCustomDictionary());
-			Predefine.MAX_FREQUENCY = totalFrequency;
-			Predefine.dTemp = (double) 1 / totalFrequency + 0.00001;
 			logger.info("合并用户词典后共有词条" + map.size() + " 全部频次" + totalFrequency + "，耗时" + (System.currentTimeMillis() - start) + "ms");
 			trie.build(map);
 			logger.info("核心词典加载成功:" + trie.size() + "个词条，下面将写入缓存……");

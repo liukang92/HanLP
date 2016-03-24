@@ -14,8 +14,8 @@ package com.hankcs.hanlp.dictionary.other;
 import com.hankcs.hanlp.HanLP;
 import com.hankcs.hanlp.corpus.io.IOUtil;
 
-import java.io.FileInputStream;
 import java.io.ObjectInputStream;
+
 import static com.hankcs.hanlp.utility.Predefine.logger;
 
 /**
@@ -83,16 +83,26 @@ public class CharTable
 
     /**
      * 正规化一些字符（原地正规化）
-     * @param charArray 字符
+     * @param charArray 字符数组
      */
     public static void normalization(char[] charArray)
     {
         assert charArray != null;
         for (int i = 0; i < charArray.length; i++)
         {
-            if(CharType.get(charArray[i]) != CharType.CT_CHINESE && CharType.get(charArray[i]) != CharType.CT_DELIMITER){
+            if(CharType.get(charArray[i]) == CharType.CT_LETTER || CharType.get(charArray[i]) == CharType.CT_OTHER){
                 charArray[i] = CONVERT[charArray[i]];
             }
         }
+    }
+
+    /**
+     * 正规化一些字符（原地正规化）
+     * @param str 字符串
+     */
+    public static void normalization(String str)
+    {
+        assert str != null;
+        normalization(str.toCharArray());
     }
 }

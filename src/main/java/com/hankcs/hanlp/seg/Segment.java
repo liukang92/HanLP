@@ -17,6 +17,7 @@ import com.hankcs.hanlp.collection.trie.bintrie.BaseNode;
 import com.hankcs.hanlp.corpus.tag.Nature;
 import com.hankcs.hanlp.dictionary.CoreDictionary;
 import com.hankcs.hanlp.dictionary.CustomDictionary;
+import com.hankcs.hanlp.dictionary.PatternDictionary;
 import com.hankcs.hanlp.dictionary.other.CharTable;
 import com.hankcs.hanlp.dictionary.other.CharType;
 import com.hankcs.hanlp.seg.NShort.Path.AtomNode;
@@ -29,6 +30,7 @@ import com.hankcs.hanlp.utility.TextUtility;
 
 import java.util.*;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.hankcs.hanlp.utility.Predefine.logger;
 
@@ -142,13 +144,11 @@ public abstract class Segment {
 	 */
 	protected static void patternSegment(char[] charArray, LinkedList<Vertex>[] vertexes) {
 		String sentence = String.valueOf(charArray);
-		Matcher m = Predefine.PATTERN_URL.matcher(sentence);
-		while (m.find()){
-			vertexes[m.start() + 1].add(new Vertex(m.group(), new CoreDictionary.Attribute(Nature.xu)));
-		}
-		m = Predefine.PATTERN_EMAIL.matcher(sentence);
-		while (m.find()){
-			vertexes[m.start() + 1].add(new Vertex(m.group(), new CoreDictionary.Attribute(Nature.xu)));
+		for (Map.Entry<Pattern, CoreDictionary.Attribute> e : PatternDictionary.patterns.entrySet()){
+			Matcher m = e.getKey().matcher(sentence);
+			while (m.find()){
+				vertexes[m.start() + 1].add(new Vertex(m.group(), e.getValue()));
+			}
 		}
 	}
 

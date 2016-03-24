@@ -80,4 +80,22 @@ public class CharacterHelper
         return input;
     }
 
+
+    public static char[] replaceSingleSpace(char[] charArray){
+        char[] newCharArray = new char[charArray.length];
+        for (int i = 0; i < charArray.length; i++) {
+            if(charArray[i] == ' '){
+                if (charArray[i + 1] != ' '){
+                    newCharArray[i] = '_';
+                    continue;
+                }
+                for(; charArray[i + 1] == ' '; i++){
+                    newCharArray[i] = charArray[i];
+                }
+            }else{
+                newCharArray[i] = charArray[i];
+            }
+        }
+        return newCharArray;
+    }
 }

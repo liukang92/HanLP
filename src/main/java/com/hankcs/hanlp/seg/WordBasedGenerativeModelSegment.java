@@ -23,6 +23,7 @@ import com.hankcs.hanlp.seg.common.Graph;
 import com.hankcs.hanlp.seg.common.Term;
 import com.hankcs.hanlp.seg.common.Vertex;
 import com.hankcs.hanlp.seg.common.WordNet;
+import com.hankcs.hanlp.utility.CharacterHelper;
 import com.hankcs.hanlp.utility.Predefine;
 import com.hankcs.hanlp.utility.TextUtility;
 
@@ -380,16 +381,17 @@ public abstract class WordBasedGenerativeModelSegment extends Segment {
 	 */
 	protected void GenerateWordNet(final WordNet wordNetStorage) {
 		final char[] charArray = wordNetStorage.charArray;
+		char[] tempCharArray = CharacterHelper.replaceSingleSpace(charArray);
 		// 核心词典查询
-		DoubleArrayTrie<CoreDictionary.Attribute>.Searcher searcher = CoreDictionary.trie.getSearcher(charArray, 0);
+		DoubleArrayTrie<CoreDictionary.Attribute>.Searcher searcher = CoreDictionary.trie.getSearcher(tempCharArray, 0);
 		while (searcher.next()) {
-			wordNetStorage.add(searcher.begin + 1, new Vertex(new String(charArray, searcher.begin, searcher.length), searcher.value, searcher.index));
+			wordNetStorage.add(searcher.begin + 1, new Vertex(new String(tempCharArray, searcher.begin, searcher.length), searcher.value, searcher.index));
 		}
 		// 原子分词，保证图连通
 		LinkedList<Vertex>[] vertexes = wordNetStorage.getVertexes();
 		// 模式匹配分词
 		if(HanLP.Config.PatternSegment){
-			patternSegment(charArray, vertexes);
+			patternSegment(tempCharArray, vertexes);
 		}
 		for (int i = 1; i < vertexes.length; ) {
 			if (vertexes[i].isEmpty()) {

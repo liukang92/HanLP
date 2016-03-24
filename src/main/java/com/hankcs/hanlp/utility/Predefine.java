@@ -40,10 +40,6 @@ public class Predefine
      */
     // 浮点数正则
     public static final Pattern PATTERN_FLOAT_NUMBER = Pattern.compile("^(-?\\d+)(\\.\\d+)?$");
-    // url正则
-    public static final Pattern PATTERN_URL = Pattern.compile("((https?|ftp|rtsp)://)?[\\w-]+(\\.[\\w-]+){2,}(:[0-9]{1,4})?(/[!-~]*)*");
-    // email正则
-    public static final Pattern PATTERN_EMAIL = Pattern.compile("\\w[\\w\\.+-]*@[\\w-]+(\\.[\\w-]+)+");
 
     public static String POSTFIX_SINGLE =
         "坝邦堡城池村单岛道堤店洞渡队峰府冈港阁宫沟国海号河湖环集江礁角街井郡坑口矿里岭楼路门盟庙弄牌派坡铺旗桥区渠泉山省市水寺塔台滩坛堂厅亭屯湾屋溪峡县线乡巷洋窑营屿园苑院闸寨站镇州庄族陂庵町";
@@ -82,7 +78,7 @@ public class Predefine
     public static int MAX_WORDS = 650;
     public static int MAX_SEGMENT_NUM = 10;
 
-    public static int MAX_FREQUENCY = 141645278;
+    public static int MAX_FREQUENCY = 25146057; // 现在总词频25146057
     /**
      * Smoothing 平滑因子
      */
@@ -135,6 +131,10 @@ public class Predefine
      * 人名 nr
      */
     public final static String TAG_PEOPLE = "未##人";
+    /**
+     * 空格 empty
+     */
+    public final static String TAG_EMPTY = "空##空";
 
     /**
      * 日志组件

@@ -68,6 +68,10 @@ public class HanLP
          */
         public static String CustomDictionaryPath[] = new String[]{"data/dictionary/custom/CustomDictionary.txt"};
         /**
+         * 正则匹配词典路径
+         */
+        public static String PatternDictionaryPath = "data/dictionary/custom/PatternDictionary.txt";
+        /**
          * 2元语法词典路径
          */
         public static String BiGramDictionaryPath = "data/dictionary/CoreNatureDictionary.ngram.mini.txt";
@@ -243,6 +247,7 @@ public class HanLP
                     }
                 }
                 CustomDictionaryPath = pathArray;
+                PatternDictionaryPath = p.getProperty("PatternDictionaryPath", PatternDictionaryPath);
                 TraditionalChineseDictionaryPath = p.getProperty("TraditionalChineseDictionaryPath", TraditionalChineseDictionaryPath);
                 SYTDictionaryPath = p.getProperty("SYTDictionaryPath", SYTDictionaryPath);
                 PinyinDictionaryPath = p.getProperty("PinyinDictionaryPath", PinyinDictionaryPath);
