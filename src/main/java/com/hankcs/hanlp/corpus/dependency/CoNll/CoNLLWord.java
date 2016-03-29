@@ -11,6 +11,9 @@
  */
 package com.hankcs.hanlp.corpus.dependency.CoNll;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * @author hankcs
  */
@@ -40,7 +43,10 @@ public class CoNLLWord
      * 当前词语与中心词的依存关系
      */
     public String DEPREL;
-
+    /**
+     * 当前词语的依赖词
+     */
+    public List<CoNLLWord> FOLLOW = new LinkedList<>();
     /**
      * 等效字符串
      */
@@ -86,11 +92,6 @@ public class CoNLLWord
         compile();
     }
 
-    private void compile()
-    {
-        this.NAME = PosTagCompiler.compile(POSTAG, LEMMA);
-    }
-
     public CoNLLWord(CoNllLine line)
     {
         LEMMA = line.value[2];
@@ -106,13 +107,25 @@ public class CoNLLWord
         this(lineArray[index]);
     }
 
+    private void compile()
+    {
+        this.NAME = PosTagCompiler.compile(POSTAG, LEMMA);
+    }
+
+    public String getRootString(){
+        CoNLLWord cur = this;
+        StringBuilder sb = new StringBuilder(cur.LEMMA).append(" [").append(cur.DEPREL);
+        while ((cur = cur.HEAD) != null) {
+            sb.append("] ").append(cur.LEMMA).append(" [").append(cur.DEPREL);
+        }
+        return sb.toString();
+    }
+
     @Override
     public String toString()
     {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(ID).append('\t').append(LEMMA).append('\t').append(LEMMA).append('\t').append(CPOSTAG).append('\t')
-                .append(POSTAG).append('\t').append('_').append('\t').append(HEAD.ID).append('\t').append(DEPREL).append('\t')
-                .append('_').append('\t').append('_');
-        return sb.toString();
+        return String.valueOf(ID) + '\t' + LEMMA + '\t' + LEMMA + '\t' + CPOSTAG + '\t' +
+                POSTAG + '\t' + '_' + '\t' + HEAD.ID + '\t' + DEPREL + '\t' +
+                '_' + '\t' + '_';
     }
 }

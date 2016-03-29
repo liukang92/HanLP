@@ -11,7 +11,10 @@
  */
 package com.hankcs.hanlp.utility;
 
+import com.hankcs.hanlp.corpus.tag.Nature;
 import com.hankcs.hanlp.dictionary.CoreBiGramTableDictionary;
+import com.hankcs.hanlp.dictionary.CoreDictionaryTransformMatrixDictionary;
+import com.hankcs.hanlp.dictionary.TransformMatrixDictionary;
 import com.hankcs.hanlp.seg.common.Vertex;
 
 import static com.hankcs.hanlp.utility.Predefine.*;
@@ -19,31 +22,54 @@ import static com.hankcs.hanlp.utility.Predefine.*;
 /**
  * @author hankcs
  */
-public class MathTools
-{
-    /**
-     * 从一个词到另一个词的词的花费
-     *
-     * @param from 前面的词
-     * @param to   后面的词
-     * @return 分数
-     */
-    public static double calculateWeight(Vertex from, Vertex to)
-    {
-        int frequency = from.getAttribute().totalFrequency;
-        if (frequency == 0)
-        {
-            frequency = 1;  // 防止发生除零错误
-        }
-//        int nTwoWordsFreq = BiGramDictionary.getBiFrequency(from.word, to.word);
-        int nTwoWordsFreq = CoreBiGramTableDictionary.getBiFrequency(from.wordID, to.wordID);
-        double value = -Math.log(dSmoothingPara * frequency / (MAX_FREQUENCY) + (1 - dSmoothingPara) * ((1 - dTemp) * nTwoWordsFreq / frequency + dTemp));
+public class MathTools {
+	/**
+	 * 从一个词到另一个词的词的花费
+	 *
+	 * @param from 前面的词
+	 * @param to   后面的词
+	 * @return 分数
+	 */
+	public static double calculateWeight(Vertex from, Vertex to) {
+		int frequency = from.getAttribute().totalFrequency;
+		if (frequency == 0) {
+			frequency = 1;  // 防止发生除零错误
+		}
+		int nTwoWordsFreq = CoreBiGramTableDictionary.getBiFrequency(from.wordID, to.wordID);
+		double value = -Math.log(dSmoothingPara * frequency / (MAX_FREQUENCY) + (1 - dSmoothingPara) * ((1 - dTemp) * nTwoWordsFreq / frequency + dTemp));
 //        double value = -Math.log((1 - dTemp) * nTwoWordsFreq / frequency + dTemp);
-        if (value < 0.0)
-        {
-            value = -value;
-        }
+		if (value < 0.0) {
+			value = -value;
+		}
 //        logger.info(String.format("%5s frequency:%6d, %s nTwoWordsFreq:%3d, weight:%.2f", from.word, frequency, from.word + "@" + to.word, nTwoWordsFreq, value));
-        return value;
-    }
+		return value;
+	}
+
+	/**
+	 * 考虑词性计算从一个词到另一个词的词的花费
+	 *
+	 * @param from 前面的词
+	 * @param to   后面的词
+	 * @return 分数
+	 */
+	public static double calculateWeight(Vertex from, Nature fromNature, Vertex to, Nature toNature) {
+		int frequency = from.getAttribute().totalFrequency;
+		if (frequency == 0) {
+			frequency = 1;  // 防止发生除零错误
+		}
+		int nTwoWordsFreq = CoreBiGramTableDictionary.getBiFrequency(from.wordID, to.wordID);
+		double nTwoNaturesDis;
+		if (fromNature.equals(Nature.begin)) {
+			nTwoNaturesDis = CoreDictionaryTransformMatrixDictionary.transformMatrixDictionary.start_probability[toNature.ordinal()];
+		} else {
+			nTwoNaturesDis = CoreDictionaryTransformMatrixDictionary.transformMatrixDictionary.transititon_probability[fromNature.ordinal()][toNature.ordinal()];
+		}
+		double value = -Math.log(dSmoothingPara * to.getAttribute().totalFrequency / MAX_FREQUENCY + (1 - dSmoothingPara) * ((1 - dTemp) * nTwoWordsFreq / frequency + dTemp));
+		value += 0.1 * nTwoNaturesDis;
+		if (value < 0.0) {
+			value = -value;
+		}
+//        logger.info(String.format("%5s frequency:%6d, %s nTwoWordsFreq:%3d, weight:%.2f", from.word, frequency, from.word + "@" + to.word, nTwoWordsFreq, value));
+		return value;
+	}
 }

@@ -108,10 +108,10 @@ public class ViterbiSegment extends WordBasedGenerativeModelSegment {
 
 	private static List<Vertex> viterbi(WordNet wordNet) {
 		// 避免生成对象，优化速度
-		LinkedList<Vertex> nodes[] = wordNet.getVertexes();
-		LinkedList<Vertex> vertexList = new LinkedList<Vertex>();
+		LinkedList<Vertex> vertexList = new LinkedList<>();
+		LinkedList<Vertex>[] nodes = wordNet.getSingleNatureVertexes();
 		for (Vertex node : nodes[1]) {
-			node.updateFrom(nodes[0].getFirst());
+			node.updateFromWithNature(nodes[0].getFirst());
 		}
 		for (int i = 1; i < nodes.length - 1; ++i) {
 			LinkedList<Vertex> nodeArray = nodes[i];
@@ -119,7 +119,7 @@ public class ViterbiSegment extends WordBasedGenerativeModelSegment {
 			for (Vertex node : nodeArray) {
 				if (node.from == null) continue;
 				for (Vertex to : nodes[i + node.realWord.length()]) {
-					to.updateFrom(node);
+					to.updateFromWithNature(node);
 				}
 			}
 		}

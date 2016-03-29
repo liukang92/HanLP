@@ -23,7 +23,7 @@ public class Config
     /**
      * 是否识别中国人名
      */
-    public boolean nameRecognize = true;
+    public boolean nameRecognize = false;
     /**
      * 是否识别音译人名
      */
@@ -47,11 +47,11 @@ public class Config
     /**
      * 词性标注
      */
-    public boolean speechTagging = false;
+    public boolean speechTagging = true;
     /**
      * 命名实体识别是否至少有一项被激活
      */
-    public boolean ner = true;
+    public boolean ner = false;
     /**
      * 是否计算偏移量
      */
