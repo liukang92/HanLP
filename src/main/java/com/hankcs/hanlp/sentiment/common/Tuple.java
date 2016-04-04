@@ -13,7 +13,7 @@ public class Tuple {
 	public Tuple(String feature, String sentiment, int polarity) {
 		this.feature = feature;
 		this.sentiment = sentiment;
-		this.polarity = Polarity.get(polarity);
+		this.polarity = Polarity.values()[polarity];
 	}
 
 	public Tuple(String object, String feature, String sentiment, int polarity) {
@@ -57,27 +57,16 @@ public class Tuple {
 		return "[O = " + object + ", F = " + feature + ", S = " + sentiment + ", P = " + polarity + "]";
 	}
 
-	enum Polarity {
-		positive("正面"), negative("负面"), neutral("中性");
-		private String name;
+	public enum Polarity {
+		neutral("中性"), positive("正面"), negative("负面");
+		private String polarity;
 
 		Polarity(String polarity) {
-			name = polarity;
-		}
-
-		public static Polarity get(int i) {
-			switch (i) {
-				case 1:
-					return positive;
-				case 2:
-					return negative;
-				default:
-					return neutral;
-			}
+			this.polarity = polarity;
 		}
 
 		public String toString() {
-			return name;
+			return polarity;
 		}
 	}
 }

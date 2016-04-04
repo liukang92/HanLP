@@ -12,14 +12,8 @@
 package com.hankcs.hanlp.dictionary;
 
 import com.hankcs.hanlp.HanLP;
-import com.hankcs.hanlp.algoritm.EditDistance;
 import com.hankcs.hanlp.corpus.io.IOUtil;
 import com.hankcs.hanlp.dictionary.common.CommonSentimentDictionary;
-import com.hankcs.hanlp.dictionary.common.CommonSynonymDictionary;
-import com.hankcs.hanlp.seg.common.Term;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.hankcs.hanlp.utility.Predefine.logger;
 

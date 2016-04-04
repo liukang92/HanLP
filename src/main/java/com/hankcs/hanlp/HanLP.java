@@ -23,6 +23,8 @@ import com.hankcs.hanlp.phrase.MutualInformationEntropyPhraseExtractor;
 import com.hankcs.hanlp.seg.Segment;
 import com.hankcs.hanlp.seg.Viterbi.ViterbiSegment;
 import com.hankcs.hanlp.seg.common.Term;
+import com.hankcs.hanlp.sentiment.SentimentAnalyzer;
+import com.hankcs.hanlp.sentiment.common.Tuple;
 import com.hankcs.hanlp.summary.TextRankKeyword;
 import com.hankcs.hanlp.summary.TextRankSentence;
 import com.hankcs.hanlp.tokenizer.StandardTokenizer;
@@ -186,6 +188,7 @@ public class HanLP {
 			// 自动读取配置
 			Properties p = new Properties() {
 				String root;
+
 				@Override
 				public String getProperty(String key, String defaultValue) {
 					// 自带文件是否存在的校验逻辑，如果value是路径则校验它
@@ -396,6 +399,10 @@ public class HanLP {
 	 */
 	public static List<Term> segment(String text) {
 		return StandardTokenizer.segment(text.toCharArray());
+	}
+
+	public static int sentiment(String text, String domain, String object) {
+		return SentimentAnalyzer.sentiment(text, domain, object);
 	}
 
 	/**
