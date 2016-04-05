@@ -13,6 +13,7 @@ public class DomainFeatureDictionary {
 	static {
 		dict.put("洗发水", new HashMap<String, Integer>() {{
 			put("头皮屑", 2);
+			put("头屑", 2);
 		}});
 	}
 

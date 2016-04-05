@@ -24,16 +24,25 @@ public class PhraseSentence implements Iterable<Phrase> {
 		}
 	}
 
-	public void labelObject(String object) {
+	//标记最近object
+	public void labelObject(String object, int labelLag) {
 		String lastObject = object;
+		int lag = labelLag;
 		for (int i = 0; i < size(); i = get(i).end) {
 			if (get(i).mark.contains(OBJECT_MARK)) {
 				lastObject = get(i).word;
+				lag = labelLag;
 			}
-			get(i).object = lastObject;
+			if (lag > 0) {
+				if (SEG_MARK.contains(get(i).word)) {
+					lag--;
+				}
+				get(i).object = lastObject;
+			}
 		}
 	}
 
+	//遍历获取特定mark的短语列表
 	public List<Integer> getPhraseList(String mark) {
 		List<Integer> heads = new LinkedList<>();
 		for (int i = 0; i < size(); i = get(i).end) {
@@ -44,6 +53,7 @@ public class PhraseSentence implements Iterable<Phrase> {
 		return heads;
 	}
 
+	//根据regexes对特定mark进行合并
 	public PhraseSentence mergeByRegex(String[] regexes, String mark) {
 		String natureString = toNatureString();
 		for (String regex : regexes) {
@@ -54,24 +64,25 @@ public class PhraseSentence implements Iterable<Phrase> {
 				int start = natureString.substring(0, m.start()).split(NATURE_MARK).length - 1;
 				int end = start + split.length - 1;
 				start = index[start];
-				end = phrases[index[end - 1]].end;
-				if (end >= phrases[start].end) {
-					phrases[start].word = toWordString(start, -1, end);
-					phrases[start].end = end;
-					phrases[start].mark = NATURE_MARK + mark;
+				end = get(index[end - 1]).end;
+				if (end >= get(start).end) {
+					get(start).word = toWordString(start, -1, end);
+					get(start).end = end;
+					get(start).mark = NATURE_MARK + mark;
 				}
 			}
 		}
 		return this;
 	}
 
+	//根据regexes对特定mark逐条进行合并
 	public PhraseSentence stepmergeByRegex(String[] regexes, String mark) {
 		Set<Integer> used = new HashSet<>();
-		for (int core : getPhraseList(SENTIMENT_MARK)) {
+		for (int core : getPhraseList(mark)) {
 			if (!get(core).mark.contains(mark) || used.contains(core)) {
 				continue;
 			}
-			int maxLen = 1, maxStart = core, maxEnd = maxStart + maxLen;
+			int maxLen = 0, maxStart = core, maxEnd = maxStart + maxLen;
 			String natureString = toNatureString(core);
 			for (String regex : regexes) {
 				Pattern p = Pattern.compile(regex);
@@ -81,7 +92,7 @@ public class PhraseSentence implements Iterable<Phrase> {
 					int start = natureString.substring(0, m.start()).split(NATURE_MARK).length - 1;
 					int end = start + split.length - 1;
 					start = index[start];
-					end = phrases[index[end - 1]].end;
+					end = get(index[end - 1]).end;
 					int len = end - start;
 					if (len > maxLen) {
 						maxStart = start;
@@ -90,23 +101,22 @@ public class PhraseSentence implements Iterable<Phrase> {
 					}
 				}
 			}
-			for (int i = maxStart; i < maxEnd; i++) {
-				if (get(i).mark.contains(SENTIMENT_MARK)) {
-					used.add(i);
+			if (maxLen == 0){
+				get(core).mark = get(core).mark.replace(mark, "");
+			}else{
+				for (int i = maxStart; i < maxEnd; i++) {
+					if (get(i).mark.contains(SENTIMENT_MARK)) {
+						used.add(i);
+					}
 				}
-			}
-			if (maxLen > 1) {
-				phrases[maxStart].word = toWordString(maxStart, core, maxEnd);
-				phrases[maxStart].end = maxEnd;
-				phrases[maxStart].mark = phrases[core].mark;
-				phrases[maxStart].object = phrases[core].object;
-				phrases[maxStart].polarity = phrases[core].polarity;
+				mergeWords(maxStart, maxEnd, core);
 			}
 		}
 		used.clear();
 		return this;
 	}
 
+	//根据规则和指定mark短语列表，返回匹配的tupleIndex
 	public List<int[]> getIndexByRegex(String[] regexes, String mark) {
 		List<int[]> ret = new LinkedList<>();
 		for (int core : getPhraseList(mark)) {
@@ -120,7 +130,7 @@ public class PhraseSentence implements Iterable<Phrase> {
 					int end = start + m.group().split(NATURE_MARK).length - 1;
 					for (int i = start; i < end; i++) {
 						int cur = index[i];
-						if (phrases[cur].mark.contains(FEATURE_MARK)) {
+						if (get(cur).mark.contains(FEATURE_MARK) || get(cur).mark.contains(OBJECT_MARK)) {
 							tuple[0] = cur;
 						}
 					}
@@ -132,6 +142,7 @@ public class PhraseSentence implements Iterable<Phrase> {
 		return ret;
 	}
 
+	//根据规则返回匹配的tupleIndex
 	public List<int[]> getIndexByRegex(String[] regexes) {
 		List<int[]> ret = new LinkedList<>();
 		for (String regex : regexes) {
@@ -150,18 +161,20 @@ public class PhraseSentence implements Iterable<Phrase> {
 		return ret;
 	}
 
+	//返回没有核心词的词性字符串
 	public String toNatureString() {
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0, n = 0; i < phrases.length; i = get(i).end, n++) {
+		for (int i = 0, n = 0; i < size(); i = get(i).end, n++) {
 			sb.append(get(i).mark);
 			index[n] = i;
 		}
 		return sb.toString();
 	}
 
+	//返回以某一个词为核心词的词性字符串
 	public String toNatureString(int core) {
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0, n = 0; i < phrases.length; i = get(i).end, n++) {
+		for (int i = 0, n = 0; i < size(); i = get(i).end, n++) {
 			if (get(i).mark.contains(SENTIMENT_MARK) && i != core) {
 				sb.append(NATURE_MARK).append(get(i).nature);
 			} else {
@@ -172,16 +185,17 @@ public class PhraseSentence implements Iterable<Phrase> {
 		return sb.toString();
 	}
 
+	//返回指定范围内的短语
 	public String toWordString(int start, int core, int end) {
-		StringBuilder sb = new StringBuilder(phrases[start].word);
-		for (int i = start + 1; i < end; i = phrases[i].end) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = start; i < end; i = get(i).end) {
 			sb.append(SPLIT);
 			if (i == core) {
 				sb.append(CORE);
 			}
-			sb.append(phrases[i].word);
+			sb.append(get(i).word.replace(CORE, ""));
 		}
-		return sb.toString();
+		return sb.delete(0, 1).toString();
 	}
 
 	public Phrase get(int i) {
@@ -190,6 +204,14 @@ public class PhraseSentence implements Iterable<Phrase> {
 
 	public int size() {
 		return phrases.length;
+	}
+
+	private void mergeWords(int start, int end, int core) {
+		get(start).word = toWordString(start, core, end);
+		get(start).end = end;
+		get(start).mark = get(core).mark;
+		get(start).object = get(core).object;
+		get(start).polarity = get(core).polarity;
 	}
 
 	@Override

@@ -401,7 +401,15 @@ public class HanLP {
 		return StandardTokenizer.segment(text.toCharArray());
 	}
 
-	public static int sentiment(String text, String domain, String object) {
+	/**
+	 * 情感识别
+	 *
+	 * @param text 文本
+	 * @param domain 领域
+	 * @param object 主体
+	 * @return 情感标量
+	 */
+	public static float sentiment(String text, String domain, String object) {
 		return SentimentAnalyzer.sentiment(text, domain, object);
 	}
 

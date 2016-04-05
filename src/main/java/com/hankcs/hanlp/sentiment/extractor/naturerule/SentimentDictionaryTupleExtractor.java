@@ -17,39 +17,44 @@ import static com.hankcs.hanlp.sentiment.common.SentimentUtil.*;
  */
 public class SentimentDictionaryTupleExtractor extends DictionaryBasedTupleExtractor {
 	// 注意优先级问题，一旦匹配成功则返回情感短语
+	// 情感短语识别规则
 	private static final String[] SENTIMENT_NATURE_REGEX = new String[]{
-			"(/c)?/#S./ude/v/n",                             //香/#S的/ude闷/v人/n
-			"(/c)?/#S./ude/p(?:/n|/vn)+/uyy",                  //香/#S的/ude跟/p理发/vn店/n/小妹/n一样/uyy
-			"(/c)?/#S./ude(/d)*(/a)+",              //破/#S的/ude[不/d]像样/a
-			"(/c)?(/d)*/v/#S.(?:/ule|/ude)?",              //磕/v破/#S了/ule
-			"(/d|/c)*(/a/ude)?/#S.(/ule)?",     //但/c还/d不至于/d太/d闷/#S了/ule
+			"(/c)?/#S./ude/v/n(?!/y)",                    		// 香/#S的/ude闷/v人/n
+			"(/c)?/#S./ude/p(?:/n|/vn)+/uyy(?!/y)",				// 香/#S的/ude跟/p理发/vn店/n/小妹/n一样/uyy
+			"(/c)?/#S./v(?:/n|/vn)(?!/y)",						// 香/#S的/ude跟/p理发/vn店/n/小妹/n一样/uyy
+			"(/c)?/#S./ude(/d)*(/a)+(?!/y)",              		// 破/#S的/ude[不/d]像样/a
+			"(/c)?(/d)*(/v)?/#S.((?:/ule|/ude)(/m)?)?(?!/y)",	// 磕/v破/#S了/ule
+			"(/c)?(/d)*(/a/ude)?/#S.(?!/y)",     				// 但/c还/d不至于/d太/d闷/#S了/ule
 	};
-
+	// 特征短语识别规则
 	private static final String[] FEATURE_NATURE_REGEX = new String[]{
 			"((?:/n|/vn)(/ude)?)*(?:/n|/vn)",
 	};
-
+	// tuple识别规则
 	private static final String[] TUPLE_REGEX = new String[]{
-			"/#Sv/#Fn",
-			"/#S.(?:/ude|/v)/#Fn",
-			"/#Fn(?:(?:/a|/d)?/vshi|/v)?/#S.",
+			"/#Sv/#(?:O|F)n",
+			"/#S.(?:/ude|/v)/#(?:O|F)n",
+			"/#(?:O|F)n(?:(?:/a|/d)?/vshi|/v)?/#S.",
 	};
 
 	@Override
-	protected List<Tuple> extract(PhraseSentence ps, String domain, String object) {
+	protected List<Tuple> extract(PhraseSentence ps, String domain, String defaultObject) {
 		List<Tuple> tuples = new LinkedList<>();
-		transformSentence(ps, domain);
-		mergeSentence(ps);
-		ps.labelObject(object);
+		ps.labelObject(defaultObject, OBJECT_LAG_NUM);
 		for (int[] arr : ps.getIndexByRegex(TUPLE_REGEX, SENTIMENT_MARK)) {
-			String feature = arr[0] == -1 ? "" : ps.get(arr[0]).word;
+			String object = ps.get(arr[1]).object;
+			if (object == null){
+				continue;
+			}
+			String feature = arr[0] == -1 ? null : ps.get(arr[0]).word;
 			String sentiment = ps.get(arr[1]).word;
 			tuples.add(new Tuple(ps.get(arr[1]).object, feature, sentiment, analysePolarity(sentiment, ps.get(arr[1]).polarity)));
 		}
 		return tuples;
 	}
 
-	private void transformSentence(PhraseSentence ps, String domain) {
+	@Override
+	protected void transformSentence(PhraseSentence ps, String domain) {
 		for (int i = 0; i < ps.size(); i++) {
 			String word = ps.get(i).word;
 			ps.get(i).nature = convertNature(ps.get(i).nature);
@@ -65,7 +70,9 @@ public class SentimentDictionaryTupleExtractor extends DictionaryBasedTupleExtra
 		}
 	}
 
-	private void mergeSentence(PhraseSentence ps) {
+
+	@Override
+	protected void mergeSentence(PhraseSentence ps) {
 		ps.mergeByRegex(OBJECT_NATURE_REGEX, OBJECT_MARK + Nature.n)
 				.stepmergeByRegex(SENTIMENT_NATURE_REGEX, SENTIMENT_MARK)
 				.mergeByRegex(FEATURE_NATURE_REGEX, FEATURE_MARK + Nature.n);

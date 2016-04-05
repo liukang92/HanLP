@@ -22,4 +22,3 @@ hs_err_pid*
 *.bin
 # 我做实验用的目录
 /data/
-/data/test

@@ -15,24 +15,41 @@ import java.util.Map;
 import static com.hankcs.hanlp.sentiment.common.SentimentUtil.*;
 
 /**
+ * 基于词典的tuple提取器
+ *
  * @author liukang
  * @since 2016/3/28
  */
 public abstract class DictionaryBasedTupleExtractor implements ITupleExtractor {
-	//	protected static final int DETECT_TERM_NUM = 5;
-
+	//主题合并规则
 	protected static final String[] OBJECT_NATURE_REGEX = new String[]{
 			"(/#O.(/w)?)*/#O.",
 	};
+	// 主体覆盖句子数
+	protected static final int OBJECT_LAG_NUM = 3;
 
-	protected boolean belongsDomain(String word, String domain) {
-		return domain.equals(DomainDictionary.dict.get(word));
-	}
-
-	protected abstract List<Tuple> extract(PhraseSentence ps, String domain, String object);
 
 	@Override
 	public List<Tuple> extractTuple(String text, String domain, String object) {
-		return extract(new PhraseSentence(HanLP.segment(text)), domain, object);
+		PhraseSentence ps = new PhraseSentence(HanLP.segment(text));
+		transformSentence(ps, domain);
+		mergeSentence(ps);
+		return extract(ps, domain, object);
 	}
+
+	/**
+	 * 根据词典转换PhraseSentence
+	 */
+	protected abstract void transformSentence(PhraseSentence ps, String domain);
+
+	/**
+	 * 根据规则合并PhraseSentence
+	 */
+	protected abstract void mergeSentence(PhraseSentence ps);
+
+	/**
+	 * 根据规则抽取tuple
+	 */
+	protected abstract List<Tuple> extract(PhraseSentence ps, String domain, String object);
+
 }

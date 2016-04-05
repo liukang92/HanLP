@@ -81,6 +81,7 @@ public class DomainSentimentDictionary {
 			put("起来", 0);
 			put("运气", 0);
 			put("功效", 0);
+			put("不如", 0);
 		}});
 	}
 

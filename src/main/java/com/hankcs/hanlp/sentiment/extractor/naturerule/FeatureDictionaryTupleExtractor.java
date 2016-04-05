@@ -18,12 +18,13 @@ import static com.hankcs.hanlp.sentiment.common.SentimentUtil.*;
 public class FeatureDictionaryTupleExtractor extends DictionaryBasedTupleExtractor {
 	private static final Map<String, Integer> FEATURE_PRE_WORD = new HashMap<String, Integer>() {{
 		put("有", 1);
+		put("起", 1);
 		put("没有", 2);
 	}};
-	private static final Map<String, Integer> OBJECT_PRE_WORD = new HashMap<String, Integer>() {{
-		put("用", 1);
-		put("不用", 2);
-	}};
+//	private static final Map<String, Integer> OBJECT_PRE_WORD = new HashMap<String, Integer>() {{
+//		put("用", 1);
+//		put("不用", 2);
+//	}};
 	private static final Map<String, Integer> OBJECT_MID_WORD = new HashMap<String, Integer>() {{
 		put("比得上", 1);
 		put("比不上", 2);
@@ -48,9 +49,7 @@ public class FeatureDictionaryTupleExtractor extends DictionaryBasedTupleExtract
 	@Override
 	protected List<Tuple> extract(PhraseSentence ps, String domain, String object) {
 		List<Tuple> tuples = new LinkedList<>();
-		transformSentence(ps, domain);
-		mergeSentence(ps);
-		ps.labelObject(object);
+		ps.labelObject(object, OBJECT_LAG_NUM);
 		for (int[] arr : ps.getIndexByRegex(TUPLE_REGEX)) {
 			String feature = null;
 			String sentiment = null;
@@ -58,15 +57,15 @@ public class FeatureDictionaryTupleExtractor extends DictionaryBasedTupleExtract
 				if (ps.get(i).mark.contains(OBJECT_MARK)) {
 					object = feature = ps.get(i).word;
 				} else if (ps.get(i).mark.contains(FEATURE_MARK)) {
-					feature = ps.get(i).word;
+					feature = ps.get(i).word.replace(CORE, "");
 				} else {
 					sentiment = ps.get(i).word;
 				}
 			}
 			if (object.equals(feature)) {
-				tuples.add(new Tuple(object, feature, sentiment, OBJECT_PRE_WORD.get(sentiment)));
+				tuples.add(new Tuple(object, feature, sentiment, analysePolarity(sentiment, DomainFeatureDictionary.get(domain, feature))));
 			} else {
-				tuples.add(new Tuple(object, feature, sentiment, FEATURE_PRE_WORD.get(sentiment)));
+				tuples.add(new Tuple(object, feature, sentiment, analysePolarity(sentiment, DomainFeatureDictionary.get(domain, feature))));
 			}
 		}
 		for (int[] arr : ps.getIndexByRegex(TRITUPLE_REGEX)) {
@@ -76,7 +75,8 @@ public class FeatureDictionaryTupleExtractor extends DictionaryBasedTupleExtract
 		return tuples;
 	}
 
-	private void transformSentence(PhraseSentence ps, String domain) {
+	@Override
+	protected void transformSentence(PhraseSentence ps, String domain) {
 		for (int i = 0; i < ps.size(); i++) {
 			String word = ps.get(i).word;
 			ps.get(i).nature = convertNature(ps.get(i).nature);
@@ -96,7 +96,8 @@ public class FeatureDictionaryTupleExtractor extends DictionaryBasedTupleExtract
 		}
 	}
 
-	private void mergeSentence(PhraseSentence ps) {
+	@Override
+	protected void mergeSentence(PhraseSentence ps) {
 		ps.mergeByRegex(OBJECT_NATURE_REGEX, OBJECT_MARK + Nature.n)
 				.stepmergeByRegex(FEATURE_NATURE_REGEX, FEATURE_MARK);
 	}

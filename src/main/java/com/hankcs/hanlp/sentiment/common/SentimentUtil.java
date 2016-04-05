@@ -1,6 +1,7 @@
 package com.hankcs.hanlp.sentiment.common;
 
 import com.hankcs.hanlp.corpus.tag.Nature;
+import com.hankcs.hanlp.dictionary.domain.DomainSentimentDictionary;
 import com.hankcs.hanlp.sentiment.common.Tuple.Polarity;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
@@ -15,7 +16,7 @@ import java.util.regex.Pattern;
  */
 public class SentimentUtil {
 	public static final String SEG_MARK = "。|！|？";
-	public static final String NEGATIVE_WORD = "不|不是|不会|不够|不大|不得|不用|不算|不能|不见得|不须|不至于|免于|尚未|并不|并未|无|无从|无法|无须|有待|未|杜绝|毫无|没|没有|绝非|非|非同";
+	public static final String[] NEGATIVE_WORD = "不|不是|不会|不够|不大|不得|不用|不算|不能|不见得|不须|不至于|免于|尚未|并不|并未|无|无从|无法|无须|有待|未|杜绝|毫无|没|没有|绝非|非|非同".split("\\|");
 	public static final String CONJUNCTION_WORD = "但|还是";
 	public static final String SENTIMENT_MARK = "#S";
 	public static final String FEATURE_MARK = "#F";
@@ -115,10 +116,19 @@ public class SentimentUtil {
 
 	public static int analysePolarity(String sentiment, int polarity) {
 		for (String word : sentiment.split(SPLIT)) {
-			if (ArrayUtils.contains(NEGATIVE_WORD.split("\\|"), word)) {
+			if (ArrayUtils.contains(NEGATIVE_WORD, word)) {// || !word.startsWith(CORE) && DomainSentimentDictionary.get("洗发水", word) == 2
 				polarity = negPolarity(polarity);
 			}
 		}
 		return polarity;
+	}
+
+	public static String toPolarityString(float polarity){
+		if (polarity > 0){
+			return "正面";
+		}else if(polarity < 0){
+			return "负面";
+		}
+		return "中性";
 	}
 }
