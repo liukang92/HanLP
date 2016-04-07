@@ -33,9 +33,11 @@ public class DemoTupleExtract {
 
 	public static void testTupleExtract() {
 		String[] testCase = new String[]{
+				"满头头皮屑",
+				"质量不好 洗了有头皮屑 又痒",
 				"以前从来没有头皮屑，自从用了拉芳的洗护就满头头皮屑，发现一块超级大块，有小脚拇指那么大的，其他的都比那小。以前三四天不洗头都不痒，现在洗完第二天就很痒了，怎么办",
-				" 光凭前代言人是张燕这一条就足够low了好吗，别的压根不用比[doge]",
-				" 好玩吗，跟个傻逼似的",
+				"光凭前代言人是张燕这一条就足够low了好吗，别的压根不用比[doge]",
+				"好玩吗，跟个傻逼似的",
 				"回复 5为1受冷风吹 :香到窒息，憋着一口气洗完头再也没有用过第二次",
 				" 不爱拉芳爱张仪",
 				"东西到了，漏了很多，还是很喜欢用这款洗发露，所以这点就将就啦",
@@ -70,6 +72,7 @@ public class DemoTupleExtract {
 			System.out.println(HanLP.segment(sentence));
 			System.out.println("sentiment : " + extractor1.extractTuple(sentence.trim(), "洗发水", "$拉芳"));
 			System.out.println("feature : " + extractor2.extractTuple(sentence.trim(), "洗发水", "$拉芳"));
+			System.out.println(SentimentUtil.toPolarityString(HanLP.sentiment(sentence.trim(), "洗发水", "拉芳")));
 			System.out.println();
 		}
 	}

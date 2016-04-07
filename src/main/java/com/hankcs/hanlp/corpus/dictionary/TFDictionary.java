@@ -15,7 +15,6 @@ import com.hankcs.hanlp.corpus.io.IOUtil;
 import com.hankcs.hanlp.corpus.occurrence.TermFrequency;
 
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.*;
@@ -24,7 +23,7 @@ import java.util.*;
  * 词频词典
  * @author hankcs
  */
-public class TFDictionary extends SimpleDictionary<TermFrequency> implements ISaveAble
+public class TFDictionary extends SimpleDictionary<TermFrequency> implements ISavable
 {
     String delimeter;
 

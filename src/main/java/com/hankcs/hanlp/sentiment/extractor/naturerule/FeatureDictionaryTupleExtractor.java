@@ -19,6 +19,7 @@ public class FeatureDictionaryTupleExtractor extends DictionaryBasedTupleExtract
 	private static final Map<String, Integer> FEATURE_PRE_WORD = new HashMap<String, Integer>() {{
 		put("有", 1);
 		put("起", 1);
+		put("满头", 1);
 		put("没有", 2);
 	}};
 //	private static final Map<String, Integer> OBJECT_PRE_WORD = new HashMap<String, Integer>() {{
