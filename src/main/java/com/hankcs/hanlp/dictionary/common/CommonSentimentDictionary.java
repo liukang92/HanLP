@@ -24,7 +24,7 @@ public class CommonSentimentDictionary {
 		return null;
 	}
 
-	public boolean load(InputStream inputStream) {
+	private boolean load(InputStream inputStream) {
 		dict = new HashMap<>();
 		String line = null;
 		try {

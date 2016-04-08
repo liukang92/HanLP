@@ -1,18 +1,18 @@
 package com.hankcs.hanlp.sentiment;
 
 import com.hankcs.hanlp.HanLP;
-import com.hankcs.hanlp.corpus.tag.Nature;
-import com.hankcs.hanlp.dictionary.domain.DomainDictionary;
-import com.hankcs.hanlp.seg.common.Term;
-import com.hankcs.hanlp.sentiment.common.Phrase;
+import com.hankcs.hanlp.dictionary.domain.DomainExceptionDictionary;
+import com.hankcs.hanlp.dictionary.domain.DomainFeatureDictionary;
 import com.hankcs.hanlp.sentiment.common.PhraseSentence;
+import com.hankcs.hanlp.sentiment.common.SentimentUtil;
 import com.hankcs.hanlp.sentiment.common.Tuple;
+import org.apache.commons.lang3.StringUtils;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import static com.hankcs.hanlp.sentiment.common.SentimentUtil.*;
+import static com.hankcs.hanlp.sentiment.common.SentimentUtil.CORE;
+import static com.hankcs.hanlp.sentiment.common.SentimentUtil.SPLIT;
+import static com.hankcs.hanlp.sentiment.common.SentimentUtil.negPolarity;
 
 /**
  * 基于词典的tuple提取器
@@ -26,8 +26,21 @@ public abstract class DictionaryBasedTupleExtractor implements ITupleExtractor {
 			"(/#O.(/w)?)*/#O.",
 	};
 	// 主体覆盖句子数
-	protected static final int OBJECT_LAG_NUM = 3;
+	protected static final int OBJECT_LAG_NUM = 1;
 
+	/**
+	 * 根据feature调整sentiment的极性
+	 */
+	public int adjustPolarity(String domain, String feature, String sentiment, int polarity) {
+		String[] split = feature.split(SPLIT);
+		feature = split[split.length - 1];
+		sentiment = sentiment.split("\\" + CORE)[1].split(SPLIT)[0];
+		int featurePolarity = DomainFeatureDictionary.get(domain, feature);
+		if (featurePolarity == Tuple.Polarity.negative.ordinal() || DomainExceptionDictionary.contains(domain, feature, sentiment)) {
+			polarity = negPolarity(polarity);
+		}
+		return polarity;
+	}
 
 	@Override
 	public List<Tuple> extractTuple(String text, String domain, String object) {

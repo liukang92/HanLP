@@ -83,7 +83,7 @@ public class PhraseSentence implements Iterable<Phrase> {
 				continue;
 			}
 			int maxLen = 0, maxStart = core, maxEnd = maxStart + maxLen;
-			String natureString = toNatureString(core);
+			String natureString = toNatureString(mark, core);
 			for (String regex : regexes) {
 				Pattern p = Pattern.compile(regex);
 				Matcher m = p.matcher(natureString);
@@ -123,7 +123,7 @@ public class PhraseSentence implements Iterable<Phrase> {
 			int[] tuple = new int[]{-1, core};
 			for (String regex : regexes) {
 				Pattern p = Pattern.compile(regex);
-				String natureString = toNatureString(core);
+				String natureString = toNatureString();
 				Matcher m = p.matcher(natureString);
 				if (m.find()) {
 					int start = natureString.substring(0, m.start()).split(NATURE_MARK).length - 1;
@@ -172,10 +172,10 @@ public class PhraseSentence implements Iterable<Phrase> {
 	}
 
 	//返回以某一个词为核心词的词性字符串
-	public String toNatureString(int core) {
+	public String toNatureString(String mark, int core) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0, n = 0; i < size(); i = get(i).end, n++) {
-			if (get(i).mark.contains(SENTIMENT_MARK) && i != core) {
+			if (get(i).mark.contains(mark) && i != core) {
 				sb.append(NATURE_MARK).append(get(i).nature);
 			} else {
 				sb.append(get(i).mark);

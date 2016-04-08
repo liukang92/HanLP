@@ -16,35 +16,35 @@ import static com.hankcs.hanlp.sentiment.common.SentimentUtil.*;
  * @since 2016/3/28
  */
 public class FeatureDictionaryTupleExtractor extends DictionaryBasedTupleExtractor {
-	private static final Map<String, Integer> FEATURE_PRE_WORD = new HashMap<String, Integer>() {{
+	private static final Map<String, Integer> SENTIMENT_HAVE_WORD = new HashMap<String, Integer>() {{
 		put("有", 1);
 		put("起", 1);
 		put("满头", 1);
 		put("没有", 2);
+		put("没", 2);
 	}};
-//	private static final Map<String, Integer> OBJECT_PRE_WORD = new HashMap<String, Integer>() {{
+	//	private static final Map<String, Integer> OBJECT_PRE_WORD = new HashMap<String, Integer>() {{
 //		put("用", 1);
 //		put("不用", 2);
 //	}};
-	private static final Map<String, Integer> OBJECT_MID_WORD = new HashMap<String, Integer>() {{
+	private static final Map<String, Integer> SENTIMENT_COMPARE_WORD = new HashMap<String, Integer>() {{
 		put("比得上", 1);
 		put("比不上", 2);
 		put("不如", 2);
 	}};
-	private static final String FEATURE_PRE_MARK = "#PF";
-	//	private static final String OBJECT_PRE_MARK = "#PO";
-	private static final String OBJECT_MID_MARK = "#MO";
+	private static final String SENTIMENT_HAVE_MARK = "#SH";
+	private static final String SENTIMENT_COMPARE_MARK = "#SC";
 
 	private static final String[] FEATURE_NATURE_REGEX = new String[]{
 			"(((/n)|(/vn))(/ude)?)*/#F.",
 	};
 
 	private static final String[] TUPLE_REGEX = new String[]{
-//			"/#PO./#O.",
-			"/#PF./#F.",
+			"/#SH./#F.",
+			"/#F./#SH.",
 	};
 	private static final String[] TRITUPLE_REGEX = new String[]{
-			"/#O./#MO./#O.",
+			"/#O./#SC./#O.",
 	};
 
 	@Override
@@ -70,8 +70,8 @@ public class FeatureDictionaryTupleExtractor extends DictionaryBasedTupleExtract
 			}
 		}
 		for (int[] arr : ps.getIndexByRegex(TRITUPLE_REGEX)) {
-			tuples.add(new Tuple(ps.get(arr[0]).word, ps.get(arr[0]).word, ps.get(arr[1]).word + ps.get(arr[2]).word, OBJECT_MID_WORD.get(ps.get(arr[1]).word)));
-			tuples.add(new Tuple(ps.get(arr[2]).word, ps.get(arr[0]).word, ps.get(arr[1]).word + ps.get(arr[2]).word, negPolarity(OBJECT_MID_WORD.get(ps.get(arr[1]).word))));
+			tuples.add(new Tuple(ps.get(arr[0]).word, ps.get(arr[0]).word, ps.get(arr[1]).word + ps.get(arr[2]).word, SENTIMENT_COMPARE_WORD.get(ps.get(arr[1]).word)));
+			tuples.add(new Tuple(ps.get(arr[2]).word, ps.get(arr[0]).word, ps.get(arr[1]).word + ps.get(arr[2]).word, negPolarity(SENTIMENT_COMPARE_WORD.get(ps.get(arr[1]).word))));
 		}
 		return tuples;
 	}
@@ -82,16 +82,14 @@ public class FeatureDictionaryTupleExtractor extends DictionaryBasedTupleExtract
 			String word = ps.get(i).word;
 			ps.get(i).nature = convertNature(ps.get(i).nature);
 			ps.get(i).mark = NATURE_MARK;
-			if (DomainDictionary.dict.containsKey(word)) {
+			if (DomainDictionary.contains(domain, word)) {
 				ps.get(i).mark += OBJECT_MARK;
 			} else if (DomainFeatureDictionary.contains(domain, word)) {
 				ps.get(i).mark += FEATURE_MARK;
-			} else if (FEATURE_PRE_WORD.containsKey(word)) {
-				ps.get(i).mark += FEATURE_PRE_MARK;
-//			} else if (OBJECT_PRE_WORD.containsKey(word)) {
-//				ps.get(i).mark += OBJECT_PRE_MARK;
-			} else if (OBJECT_MID_WORD.containsKey(word)) {
-				ps.get(i).mark += OBJECT_MID_MARK;
+			} else if (SENTIMENT_HAVE_WORD.containsKey(word)) {
+				ps.get(i).mark += SENTIMENT_HAVE_MARK;
+			} else if (SENTIMENT_COMPARE_WORD.containsKey(word)) {
+				ps.get(i).mark += SENTIMENT_COMPARE_MARK;
 			}
 			ps.get(i).mark += ps.get(i).nature;
 		}

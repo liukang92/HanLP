@@ -1,7 +1,6 @@
 package com.hankcs.hanlp.sentiment.common;
 
 import com.hankcs.hanlp.corpus.tag.Nature;
-import com.hankcs.hanlp.dictionary.domain.DomainSentimentDictionary;
 import com.hankcs.hanlp.sentiment.common.Tuple.Polarity;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.MutablePair;

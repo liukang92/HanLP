@@ -23,7 +23,7 @@ public class SentimentDictionaryTupleExtractor extends DictionaryBasedTupleExtra
 			"(/c)?/#S./ude/p(?:/n|/vn)+/uyy(?!/y)",				// 香/#S的/ude跟/p理发/vn店/n/小妹/n一样/uyy
 			"(/c)?/#S./v(?:/n|/vn)(?!/y)",						// 香/#S的/ude跟/p理发/vn店/n/小妹/n一样/uyy
 			"(/c)?/#S./ude(/d)*(/a)+(?!/y)",              		// 破/#S的/ude[不/d]像样/a
-			"(/c)?(/d)*(/v)?/#S.((?:/ule|/ude)(/m)?)?(?!/y)",	// 磕/v破/#S了/ule
+			"(/c)?(/d)*(/v)?/#S.(?:/ule(/m)?|/ude/m)(?!/y)",	// 磕/v破/#S了/ule
 			"(/c)?(/d)*(/a/ude)?/#S.(?!/y)",     				// 但/c还/d不至于/d太/d闷/#S了/ule
 	};
 	// 特征短语识别规则
@@ -48,7 +48,11 @@ public class SentimentDictionaryTupleExtractor extends DictionaryBasedTupleExtra
 			}
 			String feature = arr[0] == -1 ? null : ps.get(arr[0]).word;
 			String sentiment = ps.get(arr[1]).word;
-			tuples.add(new Tuple(ps.get(arr[1]).object, feature, sentiment, analysePolarity(sentiment, ps.get(arr[1]).polarity)));
+			int polarity = ps.get(arr[1]).polarity;
+			if (feature != null){
+				polarity = adjustPolarity(domain, feature, sentiment, polarity);
+			}
+			tuples.add(new Tuple(object, feature, sentiment, analysePolarity(sentiment, polarity)));
 		}
 		return tuples;
 	}
@@ -59,7 +63,7 @@ public class SentimentDictionaryTupleExtractor extends DictionaryBasedTupleExtra
 			String word = ps.get(i).word;
 			ps.get(i).nature = convertNature(ps.get(i).nature);
 			int polarity = DomainSentimentDictionary.get(domain, word);
-			if (DomainDictionary.dict.containsKey(word)) {
+			if (DomainDictionary.contains(domain, word)) {
 				ps.get(i).mark = NATURE_MARK + OBJECT_MARK + ps.get(i).nature;
 			} else if (polarity != 0) {
 				ps.get(i).mark = NATURE_MARK + SENTIMENT_MARK + ps.get(i).nature;
@@ -69,7 +73,6 @@ public class SentimentDictionaryTupleExtractor extends DictionaryBasedTupleExtra
 			}
 		}
 	}
-
 
 	@Override
 	protected void mergeSentence(PhraseSentence ps) {

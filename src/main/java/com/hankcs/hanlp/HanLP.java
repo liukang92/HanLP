@@ -24,7 +24,6 @@ import com.hankcs.hanlp.seg.Segment;
 import com.hankcs.hanlp.seg.Viterbi.ViterbiSegment;
 import com.hankcs.hanlp.seg.common.Term;
 import com.hankcs.hanlp.sentiment.SentimentAnalyzer;
-import com.hankcs.hanlp.sentiment.common.Tuple;
 import com.hankcs.hanlp.summary.TextRankKeyword;
 import com.hankcs.hanlp.summary.TextRankSentence;
 import com.hankcs.hanlp.tokenizer.StandardTokenizer;
@@ -88,6 +87,10 @@ public class HanLP {
 		 * 情感词词典路径
 		 */
 		public static String CoreSentimentDictionaryPath = "data/dictionary/sentiment/CoreSentiment.txt";
+		/**
+		 * 领域情感词词典路径
+		 */
+		public static String DomainSentimentDictionaryPath = "data/dictionary/sentiment/domain/";
 		/**
 		 * 人名词典路径
 		 */
@@ -225,6 +228,7 @@ public class HanLP {
 				CoreStopWordDictionaryPath = p.getProperty("CoreStopWordDictionaryPath", CoreStopWordDictionaryPath);
 				CoreSynonymDictionaryPath = p.getProperty("CoreSynonymDictionaryPath", CoreSynonymDictionaryPath);
 				CoreSentimentDictionaryPath = p.getProperty("CoreSentimentDictionaryPath", CoreSentimentDictionaryPath);
+				DomainSentimentDictionaryPath = p.getProperty("DomainSentimentDictionaryPath", DomainSentimentDictionaryPath);
 				PersonDictionaryPath = p.getProperty("PersonDictionaryPath", PersonDictionaryPath);
 				PersonDictionaryTrPath = p.getProperty("PersonDictionaryTrPath", PersonDictionaryTrPath);
 				String[] pathArray = p.getProperty("CustomDictionaryPath", "dictionary/custom/CustomDictionary.txt").split(";");
@@ -292,8 +296,6 @@ public class HanLP {
 
 		/**
 		 * 开启调试模式(会降低性能)
-		 *
-		 * @param enable
 		 */
 		public static void enableDebug(boolean enable) {
 			DEBUG = enable;
@@ -309,10 +311,6 @@ public class HanLP {
 	 * 工具类，不需要生成实例
 	 */
 	private HanLP() {
-	}
-
-	public static void mergeDictionary(String[] dictPath) {
-
 	}
 
 	/**
