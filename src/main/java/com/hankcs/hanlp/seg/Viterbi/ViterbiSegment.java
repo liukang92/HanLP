@@ -99,9 +99,9 @@ public class ViterbiSegment extends WordBasedGenerativeModelSegment {
 		}
 
 		// 是否标注词性
-		if (config.speechTagging) {
-			speechTagging(vertexList);
-		}
+//		if (config.speechTagging) {
+//			speechTagging(vertexList);
+//		}
 
 		return convert(vertexList, config.offset);
 	}
@@ -110,6 +110,9 @@ public class ViterbiSegment extends WordBasedGenerativeModelSegment {
 		// 避免生成对象，优化速度
 		LinkedList<Vertex> vertexList = new LinkedList<>();
 		LinkedList<Vertex>[] nodes = wordNet.getSingleNatureVertexes();
+		if (HanLP.Config.PatternSegment) {
+			naturePatternSegment(nodes);
+		}
 		for (Vertex node : nodes[1]) {
 			node.updateFromWithNature(nodes[0].getFirst());
 		}

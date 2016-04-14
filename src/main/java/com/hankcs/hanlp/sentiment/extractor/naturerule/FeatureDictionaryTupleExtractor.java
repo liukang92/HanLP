@@ -18,6 +18,7 @@ import static com.hankcs.hanlp.sentiment.common.SentimentUtil.*;
 public class FeatureDictionaryTupleExtractor extends DictionaryBasedTupleExtractor {
 	private static final Map<String, Integer> SENTIMENT_HAVE_WORD = new HashMap<String, Integer>() {{
 		put("有", 1);
+		put("有点", 1);
 		put("起", 1);
 		put("满头", 1);
 		put("没有", 2);

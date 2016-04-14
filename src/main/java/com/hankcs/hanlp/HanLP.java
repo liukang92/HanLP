@@ -23,7 +23,8 @@ import com.hankcs.hanlp.phrase.MutualInformationEntropyPhraseExtractor;
 import com.hankcs.hanlp.seg.Segment;
 import com.hankcs.hanlp.seg.Viterbi.ViterbiSegment;
 import com.hankcs.hanlp.seg.common.Term;
-import com.hankcs.hanlp.sentiment.SentimentAnalyzer;
+import com.hankcs.hanlp.sentiment.Sentiment;
+import com.hankcs.hanlp.sentiment.common.Tuple;
 import com.hankcs.hanlp.summary.TextRankKeyword;
 import com.hankcs.hanlp.summary.TextRankSentence;
 import com.hankcs.hanlp.tokenizer.StandardTokenizer;
@@ -408,7 +409,19 @@ public class HanLP {
 	 * @return 情感标量
 	 */
 	public static float sentiment(String text, String domain, String object) {
-		return SentimentAnalyzer.sentiment(text, domain, object);
+		return Sentiment.sentiment(text, domain, object);
+	}
+
+	/**
+	 * 情感Tuple抽取
+	 *
+	 * @param text 文本
+	 * @param domain 领域
+	 * @param object 主体
+	 * @return 情感标量
+	 */
+	public static List<Tuple> extractTuple(String text, String domain, String object) {
+		return Sentiment.extractTuple(text, domain, object);
 	}
 
 	/**

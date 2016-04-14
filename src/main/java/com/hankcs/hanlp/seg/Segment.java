@@ -144,10 +144,30 @@ public abstract class Segment {
 	 */
 	protected static void patternSegment(char[] charArray, LinkedList<Vertex>[] vertexes) {
 		String sentence = String.valueOf(charArray);
-		for (Map.Entry<Pattern, CoreDictionary.Attribute> e : PatternDictionary.patterns.entrySet()){
+		for (Map.Entry<Pattern, CoreDictionary.Attribute> e : PatternDictionary.patterns.entrySet()) {
 			Matcher m = e.getKey().matcher(sentence);
-			while (m.find()){
+			while (m.find()) {
 				vertexes[m.start() + 1].add(new Vertex(m.group(), e.getValue()));
+			}
+		}
+	}
+
+	/**
+	 * 根据词性规则添加分词结果
+	 */
+	protected static void naturePatternSegment(LinkedList<Vertex>[] vertexes) {
+		for (int i = 0; i < vertexes.length; i++) {
+			for (int j = 0; j < vertexes[i].size(); j++) {
+				Vertex v1 = vertexes[i].get(j);
+				Map<String, CoreDictionary.Attribute> patterns = PatternDictionary.naturePatterns.get(v1.attribute.nature[0].name());
+				if (patterns != null) {
+					for (Vertex v2 : vertexes[i + v1.realWord.length()]) {
+						CoreDictionary.Attribute attribute = patterns.get(v2.attribute.nature[0].name());
+						if (attribute != null) {
+							vertexes[i].addAll(new Vertex(v1.realWord + v2.realWord, attribute).splitByNature());
+						}
+					}
+				}
 			}
 		}
 	}
@@ -161,7 +181,7 @@ public abstract class Segment {
 	 * @return
 	 */
 	protected static List<AtomNode> quickAtomSegment(char[] charArray, int start, int end) {
-		List<AtomNode> atomNodeList = new LinkedList<AtomNode>();
+		List<AtomNode> atomNodeList = new LinkedList<>();
 		int offsetAtom = start;
 		int preType = CharType.get(charArray[offsetAtom]);
 		int curType;
@@ -182,7 +202,6 @@ public abstract class Segment {
 		}
 		if (offsetAtom == end)
 			atomNodeList.add(new AtomNode(new String(charArray, start, offsetAtom - start), preType));
-
 		return atomNodeList;
 	}
 
@@ -415,11 +434,9 @@ public abstract class Segment {
 	 * @return 句子列表，每个句子由一个单词列表组成
 	 */
 	public List<List<Term>> seg2sentence(String text) {
-		List<List<Term>> resultList = new LinkedList<List<Term>>();
-		{
-			for (String sentence : SentencesUtil.toSentenceList(text)) {
-				resultList.add(segSentence(sentence.toCharArray()));
-			}
+		List<List<Term>> resultList = new LinkedList<>();
+		for (String sentence : SentencesUtil.toSentenceList(text)) {
+			resultList.add(segSentence(sentence.toCharArray()));
 		}
 
 		return resultList;

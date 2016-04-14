@@ -157,27 +157,45 @@ public class CustomDictionary {
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(path), "UTF-8"));
 			String line;
+			List<String> words = new LinkedList<>();
 			while ((line = br.readLine()) != null) {
 				String[] param = line.split("\t");
-				if (param[0].length() == 0) continue;   // 排除空行
-				if (HanLP.Config.Normalization) CharTable.normalization(param[0]); // 正规化
-//                if (CoreDictionary.contains(param[0]) || map.containsKey(param[0]))
-//                {
+				if (param[0].length() == 0 || param[0].startsWith("#")) continue;   // 排除空行
+				if (HanLP.Config.Normalization) param[0] = CharTable.convert(param[0]); // 正规化
+//                if (CoreDictionary.contains(param[0]) || map.containsKey(param[0])) {
 //                    continue;
 //                }
-				int natureCount = (param.length - 1) / 2;
+				int natureCount;
+				String[] natures;
+				if ((param.length & 1) == 0) {
+					natureCount = param.length - 2;
+					natures = new String[natureCount];
+					System.arraycopy(param, 2, natures, 0, natureCount);
+					words.add(param[0]);
+					if (HanLP.Config.Normalization) param[1] = CharTable.convert(param[1]); // 正规化
+					Collections.addAll(words, param[1].split("\\|"));
+				} else {
+					natureCount = param.length - 1;
+					natures = new String[natureCount];
+					System.arraycopy(param, 1, natures, 0, natureCount);
+					words.add(param[0]);
+				}
+				natureCount >>= 1;
 				CoreDictionary.Attribute attribute;
 				if (natureCount == 0) {
 					attribute = new CoreDictionary.Attribute(defaultNature);
 				} else {
 					attribute = new CoreDictionary.Attribute(natureCount);
 					for (int i = 0; i < natureCount; ++i) {
-						attribute.nature[i] = Enum.valueOf(Nature.class, param[1 + 2 * i]);
-						attribute.frequency[i] = Integer.parseInt(param[2 + 2 * i]);
+						attribute.nature[i] = Enum.valueOf(Nature.class, natures[2 * i]);
+						attribute.frequency[i] = Integer.parseInt(natures[1 + 2 * i]);
 						attribute.totalFrequency += attribute.frequency[i];
 					}
 				}
-				map.put(param[0], attribute);
+				for (String word : words) {
+					map.put(word, attribute);
+				}
+				words.clear();
 			}
 			br.close();
 		} catch (Exception e) {

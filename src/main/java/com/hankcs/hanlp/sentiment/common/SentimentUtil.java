@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  */
 public class SentimentUtil {
 	public static final String SEG_MARK = "。|！|？";
-	public static final String[] NEGATIVE_WORD = "不|不是|不会|不够|不大|不得|不用|不算|不能|不见得|不须|不至于|免于|尚未|并不|并未|无|无从|无法|无须|有待|未|杜绝|毫无|没|没有|绝非|非|非同".split("\\|");
+	public static final String[] NEGATIVE_WORD = "不|不是|不会|不够|不大|不得|不用|不算|不能|不见得|不须|不至于|免于|尚未|并不|并未|无|无从|无法|无须|有待|未|杜绝|毫无|没|没有|绝非|非|非同|再也不会".split("\\|");
 	public static final String CONJUNCTION_WORD = "但|还是";
 	public static final String SENTIMENT_MARK = "#S";
 	public static final String FEATURE_MARK = "#F";
@@ -23,6 +23,7 @@ public class SentimentUtil {
 	public static final String CORE = "$";
 	public static final String SPLIT = "#";
 	public static final String NATURE_MARK = "/";
+	public static final float PARTIAL_NEGATIVE = -100f;
 
 	public static boolean isStartsWithCertainNature(String n, String... narr) {
 		for (String nature : narr) {
@@ -81,6 +82,7 @@ public class SentimentUtil {
 			case rzv:
 				return "rz";
 			case ule:
+			case uyy:
 			case vshi:
 			case vn:
 				return n.name();
@@ -123,6 +125,18 @@ public class SentimentUtil {
 	}
 
 	public static String toPolarityString(float polarity){
+		if (polarity > 0){
+			return "正面";
+		}else if(polarity < 0){
+			return "负面";
+		}
+		return "中性";
+	}
+
+	public static String to4PolarityString(float polarity){
+		if(polarity == PARTIAL_NEGATIVE){
+			return "中性偏负面";
+		}
 		if (polarity > 0){
 			return "正面";
 		}else if(polarity < 0){

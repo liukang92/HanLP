@@ -388,7 +388,7 @@ public abstract class WordBasedGenerativeModelSegment extends Segment {
 		// 原子分词，保证图连通
 		LinkedList<Vertex>[] vertexes = wordNetStorage.getVertexes();
 		// 模式匹配分词
-		if(HanLP.Config.PatternSegment){
+		if (HanLP.Config.PatternSegment) {
 			patternSegment(charArray, vertexes);
 		}
 		for (int i = 1; i < vertexes.length; ) {

@@ -20,89 +20,70 @@ import static com.hankcs.hanlp.utility.Predefine.logger;
 
 /**
  * 字符正规化表
+ *
  * @author hankcs
  */
-public class CharTable
-{
-    /**
-     * 正规化使用的对应表
-     */
-    public static char[] CONVERT;
+public class CharTable {
+	/**
+	 * 正规化使用的对应表
+	 */
+	public static char[] CONVERT;
 
-    static
-    {
-        long start = System.currentTimeMillis();
-        try
-        {
-            ObjectInputStream in = new ObjectInputStream(IOUtil.getInputStream(HanLP.Config.CharTablePath));
-            CONVERT = (char[]) in.readObject();
-            in.close();
-        }
-        catch (Exception e)
-        {
-            logger.severe("字符正规化表加载失败，原因如下：");
-            e.printStackTrace();
-            System.exit(-1);
-        }
+	static {
+		long start = System.currentTimeMillis();
+		try {
+			ObjectInputStream in = new ObjectInputStream(IOUtil.getInputStream(HanLP.Config.CharTablePath));
+			CONVERT = (char[]) in.readObject();
+			in.close();
+		} catch (Exception e) {
+			logger.severe("字符正规化表加载失败，原因如下：");
+			e.printStackTrace();
+			System.exit(-1);
+		}
 
-        logger.info("字符正规化表加载成功：" + (System.currentTimeMillis() - start) + " ms");
-    }
+		logger.info("字符正规化表加载成功：" + (System.currentTimeMillis() - start) + " ms");
+	}
 
-    /**
-     * 将一个字符正规化
-     * @param c 字符
-     * @return 正规化后的字符
-     */
-    public static char convert(char c)
-    {
-        return CONVERT[c];
-    }
+	/**
+	 * 将一个字符正规化
+	 *
+	 * @param c 字符
+	 * @return 正规化后的字符
+	 */
+	public static char convert(char c) {
+		return CONVERT[c];
+	}
 
-    public static char[] convert(char[] charArray)
-    {
-        char[] result = new char[charArray.length];
-        for (int i = 0; i < charArray.length; i++)
-        {
-            result[i] = CONVERT[charArray[i]];
-        }
+	public static char[] convert(char[] charArray) {
+		char[] result = new char[charArray.length];
+		for (int i = 0; i < charArray.length; i++) {
+			result[i] = CONVERT[charArray[i]];
+		}
 
-        return result;
-    }
+		return result;
+	}
 
-    public static String convert(String charArray)
-    {
-        assert charArray != null;
-        char[] result = new char[charArray.length()];
-        for (int i = 0; i < charArray.length(); i++)
-        {
-            result[i] = CONVERT[charArray.charAt(i)];
-        }
+	public static String convert(String charArray) {
+		assert charArray != null;
+		char[] result = new char[charArray.length()];
+		for (int i = 0; i < charArray.length(); i++) {
+			result[i] = CONVERT[charArray.charAt(i)];
+		}
 
-        return new String(result);
-    }
+		return new String(result);
+	}
 
-    /**
-     * 正规化一些字符（原地正规化）
-     * @param charArray 字符数组
-     */
-    public static void normalization(char[] charArray)
-    {
-        assert charArray != null;
-        for (int i = 0; i < charArray.length; i++)
-        {
-            if(CharType.get(charArray[i]) == CharType.CT_LETTER || CharType.get(charArray[i]) == CharType.CT_OTHER){
-                charArray[i] = CONVERT[charArray[i]];
-            }
-        }
-    }
-
-    /**
-     * 正规化一些字符（原地正规化）
-     * @param str 字符串
-     */
-    public static void normalization(String str)
-    {
-        assert str != null;
-        normalization(str.toCharArray());
-    }
+	/**
+	 * 正规化一些字符（原地正规化）
+	 *
+	 * @param charArray 字符数组
+	 */
+	public static void normalization(char[] charArray) {
+		assert charArray != null;
+		for (int i = 0; i < charArray.length; i++) {
+			if (CharType.get(charArray[i]) == CharType.CT_SINGLE || CharType.get(charArray[i]) == CharType.CT_OTHER) {
+				charArray[i] = CONVERT[charArray[i]];
+			}
+		}
+	}
 }

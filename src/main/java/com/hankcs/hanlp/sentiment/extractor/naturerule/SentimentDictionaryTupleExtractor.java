@@ -19,12 +19,12 @@ public class SentimentDictionaryTupleExtractor extends DictionaryBasedTupleExtra
 	// 注意优先级问题，一旦匹配成功则返回情感短语
 	// 情感短语识别规则
 	private static final String[] SENTIMENT_NATURE_REGEX = new String[]{
-			"(/c)?/#S./ude/v/n(?!/y)",                    		// 香/#S的/ude闷/v人/n
-			"(/c)?/#S./ude/p(?:/n|/vn)+/uyy(?!/y)",				// 香/#S的/ude跟/p理发/vn店/n/小妹/n一样/uyy
-			"(/c)?/#S./v(?:/n|/vn)(?!/y)",						// 香/#S的/ude跟/p理发/vn店/n/小妹/n一样/uyy
-			"(/c)?/#S./ude(/d)*(/a)+(?!/y)",              		// 破/#S的/ude[不/d]像样/a
-			"(/c)?(/d)*(/v)?/#S.(?:/ule(/m)?|/ude/m)(?!/y)",	// 磕/v破/#S了/ule
-			"(/c)?(/d)*(/a/ude)?/#S.(?!/y)",     				// 但/c还/d不至于/d太/d闷/#S了/ule
+			"(/c)?/#S./ude/v/n",                            // 香/#S的/ude闷/v人/n
+			"(/c)?/#S./ude/p(?:/n|/vn)+/uyy",                // 香/#S的/ude跟/p理发/vn店/n/小妹/n一样/uyy
+			"(/c)?/#S./v(?:/n|/vn)",                        // 香/#S的/ude跟/p理发/vn店/n/小妹/n一样/uyy
+			"(/c)?/#S./ude(/d)*(/a)+",                    // 破/#S的/ude[不/d]像样/a
+			"(/c)?(?:/d|/l)*(/v)?/#S.(?:/ule(/m)?|/ude/m)",    // 磕/v破/#S了/ule
+			"(/c)?(?:/d|/a)*(/ude)?/#S.",                    // 但/c还/d不至于/d太/d闷/#S了/ule
 	};
 	// 特征短语识别规则
 	private static final String[] FEATURE_NATURE_REGEX = new String[]{
@@ -43,13 +43,13 @@ public class SentimentDictionaryTupleExtractor extends DictionaryBasedTupleExtra
 		ps.labelObject(defaultObject, OBJECT_LAG_NUM);
 		for (int[] arr : ps.getIndexByRegex(TUPLE_REGEX, SENTIMENT_MARK)) {
 			String object = ps.get(arr[1]).object;
-			if (object == null){
+			if (object == null) {
 				continue;
 			}
 			String feature = arr[0] == -1 ? null : ps.get(arr[0]).word;
 			String sentiment = ps.get(arr[1]).word;
 			int polarity = ps.get(arr[1]).polarity;
-			if (feature != null){
+			if (feature != null) {
 				polarity = adjustPolarity(domain, feature, sentiment, polarity);
 			}
 			tuples.add(new Tuple(object, feature, sentiment, analysePolarity(sentiment, polarity)));

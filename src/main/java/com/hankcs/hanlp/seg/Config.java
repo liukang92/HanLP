@@ -47,7 +47,7 @@ public class Config
     /**
      * 词性标注
      */
-    public boolean speechTagging = true;
+    public boolean speechTagging = false;
     /**
      * 命名实体识别是否至少有一项被激活
      */
@@ -59,7 +59,7 @@ public class Config
     /**
      * 是否识别数字和量词
      */
-    public boolean numberQuantifierRecognize = true;
+    public boolean numberQuantifierRecognize = false;
     /**
      * 并行分词的线程数
      */

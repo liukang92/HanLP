@@ -21,12 +21,22 @@ import static com.hankcs.hanlp.sentiment.common.SentimentUtil.negPolarity;
  * @since 2016/3/28
  */
 public abstract class DictionaryBasedTupleExtractor implements ITupleExtractor {
-	//主题合并规则
+	/**
+	 * TODO
+	 * 1.情感词后缀修饰，如“香的很可怕”应该是负面
+	 * 2.对情感词消歧（增加词性约束），如“可以”做形容词时是情感词，做情态动词时不是情感词
+	 * 3.短语中出现的情感词应不予考虑，如“最佳情侣”中的“最佳”应该剔除
+	 * 4.object出现在tuple短语之后时也要能够监听到object的存在
+	 * 5.有些情感词后可以跟语气词，如“再也不会回购啦”
+	 * 6.以前xxx，现在xxx的情况
+	 * 7.“太xxx了”正负面无法判断
+	 */
+	//主体合并规则
 	protected static final String[] OBJECT_NATURE_REGEX = new String[]{
 			"(/#O.(/w)?)*/#O.",
 	};
 	// 主体覆盖句子数
-	protected static final int OBJECT_LAG_NUM = 1;
+	protected static final int OBJECT_LAG_NUM = 3;
 
 	/**
 	 * 根据feature调整sentiment的极性

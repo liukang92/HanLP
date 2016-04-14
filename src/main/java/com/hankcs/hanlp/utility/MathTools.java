@@ -64,7 +64,7 @@ public class MathTools {
 		} else {
 			nTwoNaturesDis = CoreDictionaryTransformMatrixDictionary.transformMatrixDictionary.transititon_probability[fromNature.ordinal()][toNature.ordinal()];
 		}
-		double value = -Math.log(dSmoothingPara * to.getAttribute().totalFrequency / MAX_FREQUENCY + (1 - dSmoothingPara) * ((1 - dTemp) * nTwoWordsFreq / frequency + dTemp));
+		double value = -Math.log(dSmoothingPara * to.getAttribute().totalFrequency / MAX_FREQUENCY + (1 - dSmoothingPara) * ((1 - dTemp) * nTwoWordsFreq / frequency + dTemp)) - Math.log(to.realWord.length());
 		value += 0.1 * nTwoNaturesDis;
 		if (value < 0.0) {
 			value = -value;

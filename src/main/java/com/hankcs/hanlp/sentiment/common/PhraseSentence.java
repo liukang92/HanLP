@@ -123,7 +123,7 @@ public class PhraseSentence implements Iterable<Phrase> {
 			int[] tuple = new int[]{-1, core};
 			for (String regex : regexes) {
 				Pattern p = Pattern.compile(regex);
-				String natureString = toNatureString();
+				String natureString = toNatureString(mark, core);
 				Matcher m = p.matcher(natureString);
 				if (m.find()) {
 					int start = natureString.substring(0, m.start()).split(NATURE_MARK).length - 1;
@@ -157,6 +157,32 @@ public class PhraseSentence implements Iterable<Phrase> {
 				System.arraycopy(index, start, tuple, 0, len);
 				ret.add(tuple);
 			}
+		}
+		return ret;
+	}
+
+	//根据规则和指定mark短语列表，返回匹配的tupleIndex
+	public List<int[]> getIndexByDeprel(String[] deprels, String mark) {
+		List<int[]> ret = new LinkedList<>();
+		for (int core : getPhraseList(mark)) {
+			int[] tuple = new int[]{-1, core};
+			for (String regex : deprels) {
+				Pattern p = Pattern.compile(regex);
+				String natureString = toNatureString(mark, core);
+				Matcher m = p.matcher(natureString);
+				if (m.find()) {
+					int start = natureString.substring(0, m.start()).split(NATURE_MARK).length - 1;
+					int end = start + m.group().split(NATURE_MARK).length - 1;
+					for (int i = start; i < end; i++) {
+						int cur = index[i];
+						if (get(cur).mark.contains(FEATURE_MARK) || get(cur).mark.contains(OBJECT_MARK)) {
+							tuple[0] = cur;
+						}
+					}
+					break;
+				}
+			}
+			ret.add(tuple);
 		}
 		return ret;
 	}
